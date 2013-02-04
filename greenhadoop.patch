@@ -1,0 +1,42 @@
+diff -rau namenodeoriginal//FSNamesystem.java namenode/FSNamesystem.java
+--- namenodeoriginal//FSNamesystem.java	2012-03-20 22:09:19.000000000 -0400
++++ namenode/FSNamesystem.java	2012-03-20 22:08:36.000000000 -0400
+@@ -302,6 +302,10 @@
+     this.safeMode = new SafeModeInfo(conf);
+     this.hostsReader = new HostsFileReader(conf.get("dfs.hosts",""),
+                         conf.get("dfs.hosts.exclude",""));
++    this.hostsReader2 = new HostsFileReader(conf.get("dfs.hosts",""),
++                        conf.get("dfs.hosts.exclude.green",""));
++    this.hostsReaderOff = new HostsFileReader(conf.get("dfs.hosts",""),
++                        conf.get("dfs.hosts.off",""));
+ 
+ 
+ 
+@@ -3377,13 +3381,26 @@
+                                 conf.get("dfs.hosts.exclude", ""));
+     hostsReader.refresh();
+ 
++    // TODO Green Decommission
++    hostsReader2.updateFileNames(conf.get("dfs.hosts",""), 
++                                conf.get("dfs.hosts.exclude.green", ""));
++    hostsReader2.refresh();
++
++    // TODO Disable Node
++    hostsReaderOff.updateFileNames(conf.get("dfs.hosts",""), 
++                                conf.get("dfs.hosts.off", ""));
++    hostsReaderOff.refresh();
++    
++
+     synchronized (this) {
+       for (Iterator<DatanodeDescriptor> it = datanodeMap.values().iterator();
+            it.hasNext();) {
+         DatanodeDescriptor node = it.next();
+ 
++        // TODO
+         // Check nodes to be off
+-        if (isDatanodeDead(nodeInfo)) {
++        if (inOffHostsList(node, null) && !inHostsList(node, null)) {
++          //if (isDatanodeDead(nodeInfo)) {
+           NameNode.stateChangeLog.warn("Removing node "+node);
+           removeDatanode(node);
+         }

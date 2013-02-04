@@ -1,0 +1,39 @@
+Daemon: ghadoopd
+	This is the daemon that runs GreenHadoop.
+
+Core: ghadoop.py
+	This is the core for GreenHadoop.
+	It includes:
+		- Energy scheduling
+		- Data management
+	The high level algorithm is in "algorithm.txt".
+
+Main configuration: ghadoopcommons.py
+	This is the main file for configuration.
+
+Solar prediction: greenavailability/
+	It contains the solar availability predictor.
+
+Other important files for GreenHadoop:
+	ghadooplogger.py: threads for logging of energy, jobs, etc.
+	ghdfsmonitor.py: thread to monitor for HDFS.
+	ghadoopmonitor.py: thread to monitor MapReduce part of Hadoop.
+	ghadoopwaiting.py: thread to manage the waiting queue.
+	ghadoopreplication.py: thread to handle file replication.
+
+Auxiliary components:
+	ghadoopdata.py: some data structures definitions.
+	ghadoopworklow.py: heritance from GreenSlot that helps setting the deadlines.
+
+Experiments:
+	experimenter.sh: script to start all the set of experiments.
+	ghadoopparser.py: parse the GreenHadoop outputs.
+
+Patch:
+	Hadoop (Namenode) needs to be modified. In particular,
+	hdfs/src/java/org/apache/hadoop/hdfs/server/namenode/
+	greenhadoop.patch provides the path for this.
+	It applies to Hadoop 0.21.0.
+
+More information:
+	http://www.research.rutgers.edu/~goiri/doc/eurosys2012.pdf
